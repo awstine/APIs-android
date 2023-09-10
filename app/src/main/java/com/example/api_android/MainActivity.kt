@@ -16,10 +16,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.api_android.data.remote.ThroneInstance
 import com.example.api_android.data.remote.ThroneResponce
 import com.example.api_android.ui.theme.APIandroidTheme
@@ -33,8 +38,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             APIandroidTheme {
 
+
                 val context = LocalContext.current /* --CALLED BEFOR MAKING OR CALLING TOASTS-- */
-                var ThroneResponce:List<ThroneResponce>? = emptyList()
+                var ThroneResponce:List<ThroneResponce>? by remember{
+                    mutableStateOf( emptyList())
+                }
+
 
                 ThroneInstance.ApiService.getCharacters().enqueue(object : Callback<List<ThroneResponce>>{
                     override fun onResponse(
@@ -42,8 +51,8 @@ class MainActivity : ComponentActivity() {
                         response: Response<List<ThroneResponce>>
                     ) {
                         //IF RESPONCE BODY IS SUCCESFUL THEN...
-                        ThroneResponce = response.body()
 
+                        ThroneResponce = response.body()
                     }
 
                     override fun onFailure(call: Call<List<ThroneResponce>>, t: Throwable) {
@@ -84,16 +93,27 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun GameOfThronesCharacters(ThroneResponce: ThroneResponce) {
+    val context = LocalContext.current
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(9.dp),
     ) {
         Column(
             modifier = Modifier
                 .padding(12.dp)
+                .fillMaxSize(),
+
         ) {
-            Text(text = "")
-            Text(text = "")
+            Text(text = ThroneResponce.id.toString(), fontSize = 20.sp)
+            Text(text = ThroneResponce.fullName, fontSize = 20.sp)
+            Text(text = ThroneResponce.title, fontSize = 20.sp)
+            Text(text = ThroneResponce.family, fontSize = 20.sp)
+            Text(text = ThroneResponce.image, fontSize = 20.sp)
+            Text(text = ThroneResponce.imageUrl, fontSize = 20.sp)
+
+
+
         }
     }
 }

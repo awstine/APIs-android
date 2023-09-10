@@ -3,8 +3,7 @@ package com.example.api_android.data.remote
 
 import com.google.gson.annotations.SerializedName
 
-class ThroneCharactersResponce : ArrayList<ThroneCharactersResponceItem>(){
-    data class ThroneCharactersResponceItem(
+    data class ThroneResponce(
         @SerializedName("family")
         val family: String,
         @SerializedName("firstName")
@@ -22,4 +21,3 @@ class ThroneCharactersResponce : ArrayList<ThroneCharactersResponceItem>(){
         @SerializedName("title")
         val title: String
     )
-}
