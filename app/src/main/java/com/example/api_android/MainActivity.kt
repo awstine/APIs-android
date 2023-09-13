@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.example.api_android.data.remote.ThroneInstance
 import com.example.api_android.data.remote.ThroneResponce
 import com.example.api_android.ui.theme.APIandroidTheme
@@ -37,7 +38,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             APIandroidTheme {
-
 
                 val context = LocalContext.current /* --CALLED BEFOR MAKING OR CALLING TOASTS-- */
                 var ThroneResponce:List<ThroneResponce>? by remember{
@@ -65,7 +65,6 @@ class MainActivity : ComponentActivity() {
                     LazyColumn {
                         items(ThroneResponce!!){ Throne ->
                             GameOfThronesCharacters(ThroneResponce = Throne)
-
                         }
                     }
                 }else{
@@ -105,20 +104,15 @@ fun GameOfThronesCharacters(ThroneResponce: ThroneResponce) {
                 .fillMaxSize(),
 
         ) {
-            Text(text = ThroneResponce.id.toString(), fontSize = 20.sp)
-            Text(text = ThroneResponce.fullName, fontSize = 20.sp)
-            Text(text = ThroneResponce.title, fontSize = 20.sp)
-            Text(text = ThroneResponce.family, fontSize = 20.sp)
-            Text(text = ThroneResponce.image, fontSize = 20.sp)
-            Text(text = ThroneResponce.imageUrl, fontSize = 20.sp)
-
-
-
+            AsyncImage(
+                model = ThroneResponce.image,
+                contentDescription = null,
+            )
+            Text(text = "ID: ${ThroneResponce.id.toString()}", fontSize = 20.sp)
+            Text(text = "Full name: ${ThroneResponce.fullName}", fontSize = 20.sp)
+            Text(text = "Title: ${ThroneResponce.title}", fontSize = 20.sp)
+            Text(text = "Family: ${ThroneResponce.family}", fontSize = 20.sp)
+            Text(text = "Image URL: ${ThroneResponce.imageUrl}", fontSize = 20.sp)
         }
     }
 }
-
-
-
-
-

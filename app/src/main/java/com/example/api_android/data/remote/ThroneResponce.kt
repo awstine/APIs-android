@@ -3,6 +3,7 @@ package com.example.api_android.data.remote
 
 import com.google.gson.annotations.SerializedName
 
+
     data class ThroneResponce(
         @SerializedName("family")
         val family: String,
