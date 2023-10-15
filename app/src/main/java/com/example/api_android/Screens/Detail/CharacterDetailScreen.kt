@@ -1,9 +1,12 @@
-package com.example.api_android.Screens
+package com.example.api_android.Screens.List
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -15,48 +18,41 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.example.api_android.data.remote.ThroneInstance
 import com.example.api_android.data.remote.ThroneResponce
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 //import javax.security.auth.callback.Callback
 
-//@Destination
+@Destination
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CharacterDetailScreen(
-    //navigator: DestinationNavigator,
+    navigator: DestinationsNavigator,
     id: Int
 ) {
     val context = LocalContext.current
-    var ThroneResponce by remember(id){
+
+    var throneResponce by remember(id){
         mutableStateOf<ThroneResponce?>(null)
     }
 
-    ThroneInstance.ApiService.characterById().enqueue(object : Callback<List<ThroneResponce>> {
-        override fun onResponce(
+    ThroneInstance.ApiService.characterById().enqueue(object: Callback<ThroneResponce> {
+        override fun onResponse(
             call: Call<ThroneResponce>,
-            responce: Response<ThroneResponce>
-        ){
-            ThroneResponce = responce.body()
+            response: Response<ThroneResponce>)
+        {
+            throneResponce = response.body()
         }
 
         override fun onFailure(call: Call<ThroneResponce>, t: Throwable) {
             Toast.makeText(context,"Failed to fetch Character Info", Toast.LENGTH_SHORT).show()
-        }
-
-        override fun onFailure(call: Call<List<ThroneResponce>>, t: Throwable) {
-            TODO("Not yet implemented")
-        }
-
-        override fun onResponse(
-            call: Call<List<ThroneResponce>>,
-            response: Response<List<ThroneResponce>>
-        ) {
-            TODO("Not yet implemented")
         }
     })
 
@@ -66,14 +62,18 @@ fun CharacterDetailScreen(
                 title = { Text(text = "Character Detail")  },
                 navigationIcon = {
                     IconButton(onClick = {
-                       // navigator.popBackStack()
+                        navigator.popBackStack()
                     }){
-                        // Icon()
+                         Icon(
+                             imageVector = Icons.Default.ArrowBack,
+                             contentDescription = null,
+                         )
                     }
                 }
             )
         }
     ){paddingValues ->
+
         Column(
             modifier = Modifier
                 .padding(paddingValues)

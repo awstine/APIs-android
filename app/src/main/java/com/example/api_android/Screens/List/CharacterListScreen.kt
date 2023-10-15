@@ -4,10 +4,7 @@ package com.example.api_android.Screens
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -15,13 +12,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -40,80 +33,54 @@ import coil.compose.AsyncImage
 //import com.example.api_android.GameOfThronesCharacters
 import com.example.api_android.data.remote.ThroneInstance
 import com.example.api_android.data.remote.ThroneResponce
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootNavGraph
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-//@Destination
-//@RootNavGraph(start = true)
+@Destination
+@RootNavGraph(start = true)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CharacterListScreen(
-   // navigator: DestinationNavigator
+    navigator: DestinationsNavigator
 ) {
     val context = LocalContext.current /* --CALLED BEFOR MAKING OR CALLING TOASTS-- */
     var ThroneResponce: List<ThroneResponce>? by remember {
-        mutableStateOf(emptyList())
+        mutableStateOf<List<ThroneResponce>?>(value = null)
     }
+    Scaffold(topBar = {
+        TopAppBar(title = {
+            Text(text = "Game Of Thrones Characters")
+        })
+    }) { paddingValues ->
 
-
-    ThroneInstance.ApiService.getCharacters().enqueue(object : Callback<List<ThroneResponce>> {
-        override fun onResponse(
-            call: Call<List<ThroneResponce>>,
-            response: Response<List<ThroneResponce>>
-        ) {
-            //IF RESPONCE BODY IS SUCCESFUL THEN...
-
-            ThroneResponce = response.body()
-        }
-
-        override fun onFailure(call: Call<List<ThroneResponce>>, t: Throwable) {
-            Toast.makeText(context, "Api call Failed Terribly", Toast.LENGTH_SHORT).show()
-        }
-
-    })
-
-    if (!ThroneResponce.isNullOrEmpty()) {
-        LazyColumn {
-            items(ThroneResponce!!) { Throne ->
-                //  GameOfThronesCharacters(ThroneResponce = Throne)
-
-            }
-        }
-    } else {
-        CircularProgressIndicator()
-    }
-
-//                ThroneInstance.ApiService.getAllContinents().enqueue(object : Callback<List<ThroneResponce>>{
-//                    override fun onResponse(
-//                        call: Call<List<ThroneResponce>>,
-//                        response: Response<List<ThroneResponce>>
-//                    ) {
-//                        Toast.makeText(context,"Api call Successful", Toast.LENGTH_SHORT).show()
-//
-//                    }
-//
-//                    override fun onFailure(call: Call<List<ThroneResponce>>, t: Throwable) {
-//                        Toast.makeText(context,"Api call Failed ", Toast.LENGTH_SHORT).show()
-//                    }
-//
-//                })
-    Scaffold(
-        topBar = {
-            TopAppBar(title = {
-                Text(text = "Game Of Thrones Characters")
-            })
-        }
-    ) { paddingValues ->
-        val context = LocalContext.current /* --CALLED BEFOR MAKING OR CALLING TOASTS-- */
-        var ThroneResponce: List<ThroneResponce>? by remember {
-            mutableStateOf<List<ThroneResponce>?>(value = null)
-        }
 
         ThroneInstance.ApiService.getCharacters().enqueue(object : Callback<List<ThroneResponce>> {
             override fun onResponse(
-                call: Call<List<ThroneResponce>>,
-                response: Response<List<ThroneResponce>>
+                call: Call<List<ThroneResponce>>, response: Response<List<ThroneResponce>>
+            ) {
+                //IF RESPONCE BODY IS SUCCESFUL THEN...
+
+                ThroneResponce = response.body()
+            }
+
+            override fun onFailure(call: Call<List<ThroneResponce>>, t: Throwable) {
+                Toast.makeText(context, "Api call Failed Terribly", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+        val context = LocalContext.current /* --CALLED BEFOR MAKING OR CALLING TOASTS-- */
+        var ThroneResponce: List<ThroneResponce>? by remember {
+            mutableStateOf(emptyList())
+        }
+
+
+        ThroneInstance.ApiService.getCharacters().enqueue(object : Callback<List<ThroneResponce>> {
+            override fun onResponse(
+                call: Call<List<ThroneResponce>>, response: Response<List<ThroneResponce>>
             ) {
                 //IF RESPONCE BODY IS SUCCESFUL THEN...
 
@@ -125,6 +92,61 @@ fun CharacterListScreen(
             }
 
         })
+
+        if (!ThroneResponce.isNullOrEmpty()) {
+            LazyColumn(
+                modifier = Modifier.padding(paddingValues)
+            ) {
+                items(ThroneResponce!!) { Throne ->
+                    //GameOfThronesCharacters(ThroneResponce = Throne)
+                    CharactersCard(ThroneResponce = Throne) {
+                        navigator.navigate("characterDetail/${Throne.id}")
+                    }
+
+                }
+            }
+        } else {
+            CircularProgressIndicator()
+        }
+
+    }
+
+}
+
+@Composable
+fun CharactersCard(
+    ThroneResponce: ThroneResponce, onClick: (id: Int) -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .height(75.dp)
+            .clickable {
+                onClick(ThroneResponce.id)
+            },
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(text = ThroneResponce.fullName)
+
+            AsyncImage(
+                model = ThroneResponce.imageUrl,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(55.dp)
+                    .clip(CircleShape)
+            )
+        }
+    }
+}
+
 //        Scaffold(
 //            topBar = {
 //                TopAppBar(
@@ -171,40 +193,3 @@ fun CharacterListScreen(
 //
 //    }
 //}
-
-        @Composable
-        fun CharactersCard(
-            ThroneResponce: ThroneResponce,
-            onClick: (id: Int) -> Unit
-        ) {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-                    .height(75.dp)
-                    .clickable {
-                        onClick(ThroneResponce.id)
-                    },
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(text = ThroneResponce.fullName)
-
-                    AsyncImage(
-                        model = ThroneResponce.imageUrl,
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size(55.dp)
-                            .clip(CircleShape)
-                    )
-                }
-            }
-        }
-    }
-}
