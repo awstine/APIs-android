@@ -1,4 +1,4 @@
-package com.example.api_android.Screens.List
+package com.example.api_android.Screens.Detail
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
@@ -43,7 +43,7 @@ fun CharacterDetailScreen(
         mutableStateOf<ThroneResponce?>(null)
     }
 
-    ThroneInstance.ApiService.characterById().enqueue(object: Callback<ThroneResponce> {
+    ThroneInstance.ApiService.getCharacters().enqueue(object: Callback<ThroneResponce> {
         override fun onResponse(
             call: Call<ThroneResponce>,
             response: Response<ThroneResponce>)

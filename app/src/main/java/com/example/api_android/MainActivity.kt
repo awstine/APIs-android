@@ -33,9 +33,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.example.api_android.Screens.NavGraph
+import com.example.api_android.Screens.NavGraphs
 import com.example.api_android.data.remote.ThroneInstance
 import com.example.api_android.data.remote.ThroneResponce
 import com.example.api_android.ui.theme.APIandroidTheme
+import com.ramcosta.composedestinations.DestinationsNavHost
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -45,23 +48,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             APIandroidTheme {
-              //  DestinationNavHost(navGraph = NavGraphs.root)
+                //DestinationNavHost(navGraph = NavGraphs.root)
+                DestinationsNavHost(navGraph = NavGraphs.root)
 
-
-//                ThroneInstance.ApiService.getAllContinents().enqueue(object : Callback<List<ThroneResponce>>{
-//                    override fun onResponse(
-//                        call: Call<List<ThroneResponce>>,
-//                        response: Response<List<ThroneResponce>>
-//                    ) {
-//                        Toast.makeText(context,"Api call Successful", Toast.LENGTH_SHORT).show()
-//
-//                    }
-//
-//                    override fun onFailure(call: Call<List<ThroneResponce>>, t: Throwable) {
-//                        Toast.makeText(context,"Api call Failed ", Toast.LENGTH_SHORT).show()
-//                    }
-//
-//                })
             }
         }
     }
